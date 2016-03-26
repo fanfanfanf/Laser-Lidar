@@ -1,6 +1,7 @@
 import threading, subprocess, cv2
-import smbus, time
-import RPi.GPIO as GPIO
+# import smbus
+import time
+# import RPi.GPIO as GPIO
 import numpy as np
 import tornado.ioloop
 import tornado.web
@@ -15,37 +16,58 @@ class RcvData:
 		self.Rcv_Vol = np.zeros(self.Point_Num, np.uint8)
 
 
-class RcvSignal(threading.Thread):
+# class RcvSignal(threading.Thread):
+#
+# 	def __init__(self):
+# 		super(RcvSignal, self).__init__()
+# 		self.address = 0x04
+# 		self.Data = 0
+# 		self.LSB = 0
+# 		self.MSB = 0
+# 		self.data_16 = 0
+#
+# 	def send_cmd(self, cmd):
+# 		bus.write_byte(self.address, cmd)
+# 		return -1
+#
+# 	def read_data(self):
+# 		self.Data = bus.read_byte(self.address)
+# 		return self.Data
+#
+# 	def read_data_16(self):
+# 		self.LSB = bus.read_byte(self.address)
+# 		self.MSB = bus.read_byte(self.address)
+# 		#print LSB
+# 		#print MSB
+# 		#Data=bus.read_byte(address)
+# 		self.data_16 = self.LSB + self.MSB*256
+# 		if self.data_16 > 800:
+# 			self.data_16 = 800
+# 		if self.data_16 < 400:
+# 			self.data_16 = 400
+# 		return self.data_16
+#
+# 	def run(self):
+# 		global rcv_data
+# 		while True:
+# 			time.sleep(0.01)
+# 			lock.acquire()
+# 			rcv_data.Rcv_Vol[rcv_data.Current_Point] = self.read_data_16()
+# 			rcv_data.Current_Point += 1
+# 			lock.release()
 
+
+class RcvSignal(threading.Thread):
 	def __init__(self):
 		super(RcvSignal, self).__init__()
-		self.address = 0x04
-		self.Data = 0
-		self.LSB = 0
-		self.MSB = 0
-
-	def send_cmd(self, cmd):
-		bus.write_byte(self.address, cmd)
-		return -1
-
-	def read_data(self):
-		self.Data = bus.read_byte(self.address)
-		return self.Data
-
-	def read_data_16(self):
-		self.LSB = bus.read_byte(self.address)
-		self.MSB = bus.read_byte(self.address)
-		#print LSB
-		#print MSB
-		#Data=bus.read_byte(address)
-		return self.LSB + self.MSB*256
+		self.test_array =
 
 	def run(self):
 		global rcv_data
 		while True:
 			time.sleep(0.01)
 			lock.acquire()
-			rcv_data.Rcv_Vol[rcv_data.Current_Point] = self.read_data_16()
+			rcv_data.Rcv_Vol[rcv_data.Current_Point] = self.test_array[rcv_data.Current_Point]
 			rcv_data.Current_Point += 1
 			lock.release()
 
@@ -110,8 +132,8 @@ class Process(threading.Thread):
 		self.crt_line_image(self.X_Coord, self.Y_coord)
 
 	def run(self):
-		GPIO.setmode(GPIO.BCM)
-		GPIO.setup(4, GPIO.IN)
+		# GPIO.setmode(GPIO.BCM)
+		# GPIO.setup(4, GPIO.IN)
 		global rcv_data
 		global complet_process
 		#while True:
@@ -147,7 +169,7 @@ class WebServer(threading.thread):
 
 
 if __name__ == '__main__':
-	bus = smbus.SMBus(1)
+	# bus = smbus.SMBus(1)
 	lock = threading.Lock()
 	signal = threading.Event()
 	rcv_data = RcvData()
@@ -161,11 +183,12 @@ if __name__ == '__main__':
 	web_server.start()
 
 	while True:
-		if GPIO.input(4) == 1:
-			lock.acquire()
-			if complet_process:
-				process = Process()
-				process.start()
-			else:
-				rcv_data.Current_Point = 0
-			lock.release()
+		# if GPIO.input == 1:
+		lock.acquire()
+		if complet_process:
+			process = Process()
+			process.start()
+		else:
+			rcv_data.Current_Point = 0
+		lock.release()
+		time.sleep(1)
