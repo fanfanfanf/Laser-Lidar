@@ -113,14 +113,17 @@ class Process(threading.Thread):
 		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(4, GPIO.IN)
 		global rcv_data
+		global complet_process
 		#while True:
-			#if GPIO.input(4) == 1:
+		#if GPIO.input(4) == 1:
 		lock.acquire()
+		complet_process = False
 		self.Num = rcv_data.Current_Point
 		self.Data = rcv_data.Rcv_Vol[:self.Num]
-		rcv_data.Current_Point = 0
+		# rcv_data.Current_Point = 0
 		lock.release()
 		self.process(self.Num, self.Data)
+		complet_process = True
 
 
 class MainHandler(tornado.web.RequestHandler):
@@ -148,17 +151,21 @@ if __name__ == '__main__':
 	lock = threading.Lock()
 	signal = threading.Event()
 	rcv_data = RcvData()
+	complet_process = False
 
 	rcv_signal = RcvSignal()
-	process = Process()
+	# process = Process()
 	web_server = WebServer()
 	rcv_signal.start()
-	process.start()
+	# process.start()
 	web_server.start()
 
 	while True:
 		if GPIO.input(4) == 1:
-			global rcv_data
 			lock.acquire()
-			signal.set()
-
+			if complet_process:
+				process = Process()
+				process.start()
+			else:
+				rcv_data.Current_Point = 0
+			lock.release()
