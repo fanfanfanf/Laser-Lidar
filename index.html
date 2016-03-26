@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset = "uft-8">
+	<title></title>
+
+	<script type="text/javascript">
+	<!--
+	ANIMA = new Image();
+	ANIMA.src = "./images/live.jpg";
+	function anime_1(){
+		document.animation.src = ANIMA.src;
+		setTimeout('anime_1()',500);
+	}
+	//-->
+	</script>
+
+	<style type = "text/css">
+	<!--
+	body{background-color: #ffffff; }
+	-->
+	</style>
+</head>
+
+<body onLoad = "anime_1()">
+	<p>
+		<img src ="./images/image1.jpg" name = "animation" alt="animation" border = "0" width = "500" height = "500">
+	</p>
+</body>
+</html>
